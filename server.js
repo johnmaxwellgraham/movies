@@ -1,63 +1,49 @@
 // server.js
 
-// BASE SETUP
-// =============================================================================
 
-// call the packages we need
-var express    = require('express');        // call express
-var app        = express();                 // define our app using express
+var express    = require('express');        
+var app        = express();                 
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://johnmaxwellgraham:twotimes@ds113785.mlab.com:13785/graham')
 var Movie = require('./models/movie.js');
-// configure app to use bodyParser()
-// this will let us get the data from a POST
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-var port = process.env.PORT || 8080;        // set our port
+var port = process.env.PORT || 8080;        
 
-// ROUTES FOR OUR API
-// =============================================================================
-var router = express.Router();              // get an instance of the express Router
+var router = express.Router();              
 
-// middleware to use for all requests
+
 router.use(function(req, res, next) {
   // do logging
   console.log('Something is happening.');
-  next(); // make sure we go to the next routes and don't stop here
+  next(); 
 });
 
-// test route to make sure everything is working (accessed at GET http://localhost:8080/api)
 router.get('/', function(req, res) {
     res.json({ message: 'hooray! welcome to our api!' });   
 });
 
-// more routes for our API will happen here
-// on routes that end in /bears
-// ----------------------------------------------------
+
 router.route('/movies')
 
 
 
-// create a bear (accessed at POST http://localhost:8080/api/bears)
 .post(function(req, res) {
   
-          var movie = new Movie();      // create a new instance of the Bear model
-          movie.title = req.body.title;  // set the bears name (comes from the request)
+          var movie = new Movie();      
+          movie.title = req.body.title; 
           movie.genre = req.body.genre;
           movie.length = req.body.length; 
-          // save the bear and check for errors
           movie.save(function(err) {
               if (err)
                   res.send(err);
-  
               res.json({ message: 'Movie created!' });
-          });
-  
+          }); 
       })
 
-// get all the bears (accessed at GET http://localhost:8080/api/bears)
 .get(function(req, res) {
   Movie.find(function(err, movies) {
       if (err)
@@ -67,8 +53,7 @@ router.route('/movies')
   });
 })
 
-// on routes that end in /bears/:bear_id
-// ----------------------------------------------------
+
 router.route('/movies/:movie_id')
    
 .get(function(req, res) {
@@ -80,8 +65,6 @@ router.route('/movies/:movie_id')
 })
 
 .put(function(req, res) {
-  
-          // use our bear model to find the bear we want
           Movie.findById(req.params.movie_id, function(err, movie) {
   
               if (err)
@@ -89,9 +72,9 @@ router.route('/movies/:movie_id')
   
               movie.title = req.body.title; 
               movie.genre = req.body.genre;
-              movie.length = req.body.length; // update the bears info
+              movie.length = req.body.length; 
   
-              // save the bear
+              
               movie.save(function(err) {
                   if (err)
                       res.send(err);
@@ -113,11 +96,6 @@ router.route('/movies/:movie_id')
         });
     });
 
-// REGISTER OUR ROUTES -------------------------------
-// all of our routes will be prefixed with /api
 app.use('/api', router);
-
-// START THE SERVER
-// =============================================================================
 app.listen(port);
 console.log('Magic happened on port ' + port);

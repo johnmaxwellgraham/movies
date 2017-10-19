@@ -8,7 +8,7 @@ class MovieList extends React.Component {
     }
   
     componentWillMount() {
-      axios.get('/api/moviess')
+      axios.get('/api/movies')
         .then((response) => {
           this.setState({
             movies: response.data
